@@ -1,8 +1,5 @@
 name: Create Pull Request
-on: 
-    workflow_dispatch:
-    release:
-      types: [edited]
+on: workflow_dispatch
 jobs:
   build:
     name: Create Pull Request
