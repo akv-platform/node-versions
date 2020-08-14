@@ -1,38 +1,31 @@
 name: Create Pull Request
-
 on: 
     workflow_dispatch:
     release:
       types: [edited]
-
 jobs:
-
   build:
+    name: Create Pull Request
     env:
       REPOSITORY_NAME: "node-versions"
       BRANCH_NAME: "update-versions-manifest-file"
-
     runs-on: ubuntu-latest
-
     steps:
-    - name: env
-      run: Get-ChildItem -Path Env:\
-      shell: pwsh
-
     - uses: actions/checkout@v2
       with:
         submodules: true
 
     - name: Create versions-manifest.json
+      shell: pwsh
       run: |
         ./helpers/packages-generation/manifest-generator.ps1 -GitHubRepositoryOwner "${{github.repository_owner}}" `
                                                              -GitHubRepositoryName "$env:REPOSITORY_NAME"`
                                                              -GitHubAccessToken "${{secrets.GITHUB_TOKEN}}"`
                                                              -OutputFile "./versions-manifest.json"`
                                                              -ConfigurationFile "./config/node-manifest-config.json"
-      shell: pwsh
 
     - name: Create GitHub PR
+      shell: pwsh
       run: |
         $formattedDate = Get-Date -Format "MM/dd/yyyy"
         ./helpers/github/create-pull-request.ps1 `
@@ -43,6 +36,4 @@ jobs:
                             -CommitMessage "Update versions-manifest" `
                             -PullRequestTitle "[versions-manifest] Update for release from ${formattedDate}" `
                             -PullRequestBody "Update versions-manifest.json for release from ${formattedDate}"
-      shell: pwsh
-
 
